@@ -32,3 +32,4 @@ Route::post('/messages', function (Request $request) {
 Route::post('/chat/joined', [ChatController::class, 'joined']);
 Route::post('/chat/left',   [ChatController::class, 'left']);
 Route::post('/chat', [ChatController::class, 'index']);
+Route::post('/messages', [ChatController::class, 'store']);

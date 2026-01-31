@@ -91,7 +91,7 @@ const initEcho = () => {
 
 //     // Añadimos nick localmente desde el principio (para verte a ti mismo)
 //     if (!onlineUsers.value.includes(props.nick)) {
-//         onlineUsers.value.push(props.nick)
+ //         onlineUsers.value.push(props.nick)
 //     }
 
 //     axios.post('/chat/joined', {
@@ -105,51 +105,104 @@ const initEcho = () => {
 // })
 
 
-onMounted(() => {
-    console.log("[DEBUG] props recibidos en chat.vue → nick:", props.nick, "roomId:", props.roomId)
+// onMounted(() => {
+//     console.log("[DEBUG] props recibidos en chat.vue → nick:", props.nick, "roomId:", props.roomId)
+
+//     if (!props.roomId) {
+//         console.error("[ERROR] roomId no llegó al componente!")
+//         alert("Error: No se recibió el ID de la sala")
+//         return
+//    }
+
+//     initEcho()
+
+//     if (!onlineUsers.value.includes(props.nick)) {
+//         onlineUsers.value.push(props.nick)
+//     }
+
+//     axios.post('/chat/joined', {
+//         nick: props.nick,
+//         roomId: props.roomId,
+//     })
+//         .then(() => console.log("Joined OK"))
+//         .catch(err => {
+//             console.error("Joined FALLÓ:", err.response?.data || err)
+//         })
+// })
+
+
+// onUnmounted(() => {
+//     axios.post('/chat/left', {
+//         nick: props.nick,
+//         roomId: props.roomId,
+//     })
+//         .then(() => console.log("Left OK"))
+//         .catch(err => console.error("Left FALLÓ:", err))
+
+//     if (window.Echo) {
+//         window.Echo.leave(`chat.${props.roomId}`)
+//         console.log("Echo dejado del canal")
+//     }
+// })
+
+
+
+onMounted(async () => {
+    console.log(
+        "[DEBUG] props recibidos → nick:",
+        props.nick,
+        "roomId:",
+        props.roomId
+    )
 
     if (!props.roomId) {
-        console.error("[ERROR] roomId no llegó al componente!")
-        alert("Error: No se recibió el ID de la sala")
+        console.error("[ERROR] roomId no llegó")
         return
     }
 
     initEcho()
 
-    if (!onlineUsers.value.includes(props.nick)) {
-        onlineUsers.value.push(props.nick)
-    }
-
-    axios.post('/chat/joined', {
-        nick: props.nick,
-        roomId: props.roomId,
-    })
-        .then(() => console.log("Joined OK"))
-        .catch(err => {
-            console.error("Joined FALLÓ:", err.response?.data || err)
+    try {
+        const res = await axios.post('/chat/joined', {
+            nick: props.nick,
+            roomId: props.roomId,
         })
+
+        // 👇 LA CLAVE
+        onlineUsers.value = res.data.onlineUsers
+        console.log("Usuarios online:", onlineUsers.value)
+    } catch (err: any) {
+        console.error("Joined FALLÓ:", err.response?.data || err)
+    }
 })
-
-
-
-
-
-
 
 
 onUnmounted(() => {
     axios.post('/chat/left', {
         nick: props.nick,
         roomId: props.roomId,
-    })
-        .then(() => console.log("Left OK"))
-        .catch(err => console.error("Left FALLÓ:", err))
+    }).catch(err => console.error("Left FALLÓ:", err))
 
     if (window.Echo) {
         window.Echo.leave(`chat.${props.roomId}`)
         console.log("Echo dejado del canal")
     }
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const sendMessage = async () => {
     if (!message.value.trim()) return
