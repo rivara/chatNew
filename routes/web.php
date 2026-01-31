@@ -19,11 +19,11 @@ Route::post('/messages', function (Request $request) {
     $request->validate([
         'nick' => 'required|string|max:20',
         'message' => 'required|string|max:500',
-        'room_id' => 'required|string',
+        'roomId' => 'required|string',
     ]);
 
     // Dispara el evento a todos menos al que envía
-    broadcast(new MessageSent($request->nick, $request->message,  $request->room_id))->toOthers();
+    broadcast(new MessageSent($request->nick, $request->message,  $request->roomId))->toOthers();
 
     // Devuelve respuesta JSON
      return response()->json(['status' => 'ok']);
@@ -31,3 +31,4 @@ Route::post('/messages', function (Request $request) {
 
 Route::post('/chat/joined', [ChatController::class, 'joined']);
 Route::post('/chat/left',   [ChatController::class, 'left']);
+Route::post('/chat', [ChatController::class, 'index']);

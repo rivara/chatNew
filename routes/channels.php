@@ -10,5 +10,8 @@ use Illuminate\Support\Facades\Broadcast;
 
 // Opcional: si quieres mantener algún control mínimo
 Broadcast::channel('chat.{roomId}', function ($user, $roomId) {
-    return true; // permite a cualquiera (incluso guests)
+    return [
+        'id' => $user->id ?? uniqid(),
+        'name' => $user->name ?? 'guest',
+    ];
 });

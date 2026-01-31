@@ -86,28 +86,61 @@ const initEcho = () => {
     console.log("[DEBUG] Echo final:", window.Echo)
 }
 
+// onMounted(() => {
+//     initEcho()
+
+//     // Añadimos nick localmente desde el principio (para verte a ti mismo)
+//     if (!onlineUsers.value.includes(props.nick)) {
+//         onlineUsers.value.push(props.nick)
+//     }
+
+//     axios.post('/chat/joined', {
+//         nick: props.nick,
+//         roomId: props.roomId,
+//     })
+//         .then(() => {
+//             console.log("Joined OK - Notificado al servidor")
+//         })
+//         .catch(err => console.error("Joined FALLÓ:", err.response?.data || err))
+// })
+
+
 onMounted(() => {
+    console.log("[DEBUG] props recibidos en chat.vue → nick:", props.nick, "roomId:", props.roomId)
+
+    if (!props.roomId) {
+        console.error("[ERROR] roomId no llegó al componente!")
+        alert("Error: No se recibió el ID de la sala")
+        return
+    }
+
     initEcho()
 
-    // Añadimos nick localmente desde el principio (para verte a ti mismo)
     if (!onlineUsers.value.includes(props.nick)) {
         onlineUsers.value.push(props.nick)
     }
 
     axios.post('/chat/joined', {
         nick: props.nick,
-        room_id: props.roomId,
+        roomId: props.roomId,
     })
-        .then(() => {
-            console.log("Joined OK - Notificado al servidor")
+        .then(() => console.log("Joined OK"))
+        .catch(err => {
+            console.error("Joined FALLÓ:", err.response?.data || err)
         })
-        .catch(err => console.error("Joined FALLÓ:", err.response?.data || err))
 })
+
+
+
+
+
+
+
 
 onUnmounted(() => {
     axios.post('/chat/left', {
         nick: props.nick,
-        room_id: props.roomId,
+        roomId: props.roomId,
     })
         .then(() => console.log("Left OK"))
         .catch(err => console.error("Left FALLÓ:", err))
@@ -129,7 +162,7 @@ const sendMessage = async () => {
         await axios.post('/messages', {
             nick: props.nick,
             message: textToSend,
-            room_id: props.roomId,
+            roomId: props.roomId,
         })
 
         // Mostrar localmente (porque .toOthers() no te lo devuelve a ti)

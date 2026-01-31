@@ -21,7 +21,7 @@ const enterChat = () => {
     router.visit('/chat', {
         data: {
             nick: nick.value,
-            room: roomId.value
+            roomId: roomId.value
         }
     })
 }
