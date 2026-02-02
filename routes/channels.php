@@ -1,17 +1,23 @@
 <?php
-
 use Illuminate\Support\Facades\Broadcast;
 
-// Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
-//     return (int) $user->id === (int) $id;
-// });
-// routes/channels.php
-// Elimina o comenta la definición de presencia para este canal
+// Broadcast::channel('chat.{roomId}', function ($user, $roomId) {
+//     $nick = session('nick');
 
-// Opcional: si quieres mantener algún control mínimo
-Broadcast::channel('chat.{roomId}', function ($user, $roomId) {
-    return [
-        'id' => $user->id ?? uniqid(),
-        'name' => $user->name ?? 'guest',
-    ];
-});
+//     if (!$nick) {
+//         return false; // NO entra al channel
+//     }
+
+//     return [
+//         'id'   => uniqid(),
+//         'nick' => $nick,
+//     ];
+// });
+
+
+// Broadcast::channel('chat.{roomId}', function ($user, $roomId) {
+//     return [
+//         'id' => $user->id ?? uniqid(),
+//         'nick' => $user->nick ?? request('nick'),
+//     ];
+// });

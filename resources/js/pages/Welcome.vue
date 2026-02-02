@@ -10,8 +10,6 @@ if (token) {
   axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content
 }
 
-
-
 const nick = ref('')
 const roomId = ref('general') // Sala por defecto
 

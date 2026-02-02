@@ -6,30 +6,16 @@ use Inertia\Inertia;
 use App\Events\MessageSent;
 use Illuminate\Http\Request;
 
-
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
 
+// Ruta principal del chat (solo GET para mostrar la vista Inertia)
+Route::get('/chat', [ChatController::class, 'index'])->name('chat');
 
+// Ruta para enviar mensajes (POST)
+Route::post('/messages', [ChatController::class, 'store'])->name('messages.store');
 
-Route::match(['get', 'post'], '/chat', [ChatController::class, 'index'])->name('chat');
-
-Route::post('/messages', function (Request $request) {
-    $request->validate([
-        'nick' => 'required|string|max:20',
-        'message' => 'required|string|max:500',
-        'roomId' => 'required|string',
-    ]);
-
-    // Dispara el evento a todos menos al que envía
-    broadcast(new MessageSent($request->nick, $request->message,  $request->roomId))->toOthers();
-
-    // Devuelve respuesta JSON
-     return response()->json(['status' => 'ok']);
-});
-
-Route::post('/chat/joined', [ChatController::class, 'joined']);
-Route::post('/chat/left',   [ChatController::class, 'left']);
-Route::post('/chat', [ChatController::class, 'index']);
-Route::post('/messages', [ChatController::class, 'store']);
+// Si en algún momento necesitas las rutas joined/left (opcional con presencia nativa)
+Route::post('/chat/joined', [ChatController::class, 'joined'])->name('chat.joined');
+Route::post('/chat/left',   [ChatController::class, 'left'])->name('chat.left');

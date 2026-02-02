@@ -24,73 +24,95 @@ class ChatController extends Controller
         ]);
     }
 
-    public function joined(Request $request)
+    // public function joined(Request $request)
+    // {
+    //     $request->validate([
+    //         'nick'   => 'required|string|max:20',
+    //         'roomId' => 'required|string|max:50',
+    //     ]);
+
+    //     $roomId = $request->roomId;
+    //     $nick = $request->nick;
+
+    //     $users = Cache::get("chat:$roomId", []);
+
+    //     if (!in_array($nick, $users)) {
+    //         $users[] = $nick;
+    //         Cache::put("chat:$roomId", $users);
+    //     }
+
+    //     broadcast(new UserJoined($roomId, $nick))->toOthers();
+
+    //     return response()->json([
+    //         'onlineUsers' => $users,
+    //     ]);
+    // }
+
+    // public function left(Request $request)
+    // {
+    //     $request->validate([
+    //         'nick'   => 'required|string|max:20',
+    //         'roomId' => 'required|string|max:50',
+    //     ]);
+
+    //     $roomId = $request->roomId;
+    //     $nick = $request->nick;
+
+    //     $users = Cache::get("chat:$roomId", []);
+    //     $users = array_values(array_filter($users, fn ($u) => $u !== $nick));
+
+    //     Cache::put("chat:$roomId", $users);
+
+    //     broadcast(new UserLeft($roomId, $nick))->toOthers();
+
+    //     return response()->json(['status' => 'left']);
+    // }
+
+
+
+
+
+
+// public function store(Request $request)
+// {
+//     $request->validate([
+//         'nick'   => 'required|string|max:20',
+//         'message'=> 'required|string|max:500',
+//         'roomId' => 'required|string|max:50',
+//     ]);
+
+//     broadcast(
+//         new MessageSent(
+//             $request->nick,
+//             $request->message,
+//             $request->roomId
+//         )
+//     );
+
+//     return response()->json(['status' => 'sent']);
+// }
+
+
+ public function store(Request $request)
     {
-        $request->validate([
-            'nick'   => 'required|string|max:20',
-            'roomId' => 'required|string|max:50',
+        $validated = $request->validate([
+            'nick'    => 'required|string|max:20',
+            'message' => 'required|string|max:500',
+            'roomId'  => 'required|string|max:50',
         ]);
 
-        $room = $request->roomId;
-        $nick = $request->nick;
-
-        $users = Cache::get("chat:$room", []);
-
-        if (!in_array($nick, $users)) {
-            $users[] = $nick;
-            Cache::put("chat:$room", $users);
-        }
-
-        broadcast(new UserJoined($room, $nick))->toOthers();
+        //CLAVE: broadcast SIN toOthers() para que TODOS lo vean
+        broadcast(new MessageSent(
+            $validated['nick'],
+            $validated['message'],
+            $validated['roomId']
+        ));
 
         return response()->json([
-            'onlineUsers' => $users,
+            'status' => 'sent',
         ]);
     }
 
-    public function left(Request $request)
-    {
-        $request->validate([
-            'nick'   => 'required|string|max:20',
-            'roomId' => 'required|string|max:50',
-        ]);
-
-        $room = $request->roomId;
-        $nick = $request->nick;
-
-        $users = Cache::get("chat:$room", []);
-        $users = array_values(array_filter($users, fn ($u) => $u !== $nick));
-
-        Cache::put("chat:$room", $users);
-
-        broadcast(new UserLeft($room, $nick))->toOthers();
-
-        return response()->json(['status' => 'left']);
-    }
-
-
-
-
-
-
-public function store(Request $request)
-{
-    $request->validate([
-        'nick'   => 'required|string|max:20',
-        'message'=> 'required|string|max:500',
-        'roomId' => 'required|string|max:50',
-    ]);
-
-    broadcast(
-        new MessageSent(
-            $request->roomId,
-            $request->nick,
-            $request->message
-        )
-    )->toOthers();
-
-    return response()->json(['status' => 'sent']);
-}
 
 
 
