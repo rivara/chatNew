@@ -1,4 +1,4 @@
-**Proyecto Laravel/Vue y soketi con eventos** 
+**Proyecto Laravel/Vue y soketi con eventos**
 
 Este proyecto carece de bd y para hacerlos funcionar tienes que hacer los siguientes pasos
 
